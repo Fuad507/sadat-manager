@@ -22,8 +22,8 @@ export const firebaseConfig = {
 
 // Paste the Firebase Authentication UIDs here after creating the two users
 // (Firebase Console -> Authentication -> Users -> copy the "User UID" column)
-export const ADMIN_UID  = "mcguVAjfDfTOvmZyeZjHxYOfm2F2";   // Nazmus Sadat's account
-export const VIEWER_UID = "goRGm9LafAb9plG8nInUlBxtiWh1";  // Dashboard-only account
+export const ADMIN_UID  = "goRGm9LafAb9plG8nInUlBxtiWh1";   // Nazmus Sadat's account
+export const VIEWER_UID = "mcguVAjfDfTOvmZyeZjHxYOfm2F2";  // Dashboard-only account
 
 // Firebase Auth needs an email, not a phone number. We turn the phone
 // number typed at login into "<phone>@<this domain>" automatically, so
