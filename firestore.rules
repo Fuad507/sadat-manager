@@ -1,0 +1,32 @@
+rules_version = '2';
+
+// This is what actually enforces "Sadat can do everything, the other
+// account can only view" — it applies no matter what happens in the
+// browser, so it holds even if the app's source code is public.
+//
+// Paste the same two UIDs you used in js/firebase-config.js below,
+// then paste this whole file into Firebase Console -> Firestore Database
+// -> Rules, and click Publish.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.uid == "PASTE_ADMIN_UID_HERE";
+    }
+
+    function isKnownUser() {
+      return isSignedIn() &&
+        (request.auth.uid == "PASTE_ADMIN_UID_HERE" || request.auth.uid == "PASTE_VIEWER_UID_HERE");
+    }
+
+    match /{document=**} {
+      allow read: if isKnownUser();
+      allow write: if isAdmin();
+    }
+  }
+}

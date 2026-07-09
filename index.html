@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sadat Manager — Sign in</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="login-shell">
+  <div class="login-card">
+    <div class="login-mark">
+      <div class="leaf"></div>
+      <div class="wordmark">Sadat Manager</div>
+    </div>
+    <p class="sub">Expenses, tasks and the office .</p>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <form id="loginForm">
+      <div class="field">
+        <label for="phone">Phone number</label>
+        <input type="text" id="phone" inputmode="numeric" placeholder="01XXXXXXXXX" required />
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••" required />
+      </div>
+      <button type="submit" class="btn btn-primary" id="loginBtn">Sign in</button>
+    </form>
+
+    <div class="hint-box">
+     Ask the admin if you don't have your login details.
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/auth.js"></script>
+</body>
+</html>

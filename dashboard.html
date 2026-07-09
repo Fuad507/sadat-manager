@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sadat Manager</title>
+<link rel="stylesheet" href="css/style.css" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="login-mark">
+      <div class="leaf"></div>
+      <div class="wordmark">Sadat Manager</div>
+    </div>
+
+    <nav>
+      <button class="nav-item active" data-view="overview"><span class="ico">&#9679;</span> Overview</button>
+      <button class="nav-item" data-view="expenses"><span class="ico">&#9679;</span> Expenses</button>
+      <button class="nav-item" data-view="notebook"><span class="ico">&#9679;</span> Notebook &amp; Tasks</button>
+      <button class="nav-item" data-view="members"><span class="ico">&#9679;</span> Members</button>
+      <button class="nav-item" data-view="office"><span class="ico">&#9679;</span> Office Management</button>
+    </nav>
+
+    <div class="sidebar-foot">
+      <span class="role-chip" id="roleChip">ADMIN</span>
+      <div class="user-name" id="userName">Nazmus Sadat</div>
+      <div class="user-phone" id="userPhone">01670479817</div>
+      <button class="btn btn-ghost btn-sm" id="logoutBtn" style="width:100%;">Log out</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- ===== OVERVIEW ===== -->
+    <section class="view active" id="view-overview">
+      <div class="topbar">
+        <div>
+          <h1>Welcome back<span id="overviewName"></span></h1>
+          <div class="desc">Here's how this month is looking.</div>
+        </div>
+        <div class="month-picker">
+          <button id="ovPrev">&#8249;</button>
+          <span id="ovMonthLabel">—</span>
+          <button id="ovNext">&#8250;</button>
+        </div>
+      </div>
+
+      <div class="viewer-banner" id="viewerBanner" style="display:none;">
+        You're signed in on the dashboard-only account — you can view everything here, but adding or editing is turned off.
+      </div>
+
+      <div class="stat-grid">
+        <div class="card stat-card" id="statPersonal">
+          <div class="label">Personal expenses</div>
+          <div class="value num">৳0</div>
+          <div class="sub">this month</div>
+        </div>
+        <div class="card stat-card" id="statOffice">
+          <div class="label">Office balance</div>
+          <div class="value num">৳0</div>
+          <div class="sub">income − expense</div>
+        </div>
+        <div class="card stat-card" id="statMembers">
+          <div class="label">Given to members</div>
+          <div class="value num">৳0</div>
+          <div class="sub">this month</div>
+        </div>
+        <div class="card stat-card" id="statTasks">
+          <div class="label">Open tasks</div>
+          <div class="value num">0</div>
+          <div class="sub">pending</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="section-title">This month's spending</div>
+          <div class="pulse-strip" id="pulseStrip"></div>
+          <canvas id="categoryChart" height="150" style="margin-top:22px;"></canvas>
+        </div>
+
+        <div class="card">
+          <div class="section-head">
+            <div class="section-title" style="margin-bottom:0;">Budgets</div>
+            <button class="btn btn-ghost btn-sm" id="editBudgetsBtn">Edit</button>
+          </div>
+          <div id="budgetList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== EXPENSES ===== -->
+    <section class="view" id="view-expenses">
+      <div class="topbar">
+        <div>
+          <h1>Personal expenses</h1>
+          <div class="desc">Everyday spending, tracked by category.</div>
+        </div>
+        <div class="month-picker">
+          <button id="exPrev">&#8249;</button>
+          <span id="exMonthLabel">—</span>
+          <button id="exNext">&#8250;</button>
+        </div>
+      </div>
+
+      <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="card stat-card"><div class="label">Total this month</div><div class="value num" id="exTotal">৳0</div></div>
+        <div class="card stat-card"><div class="label">Entries</div><div class="value num" id="exCount">0</div></div>
+        <div class="card stat-card"><div class="label">Top category</div><div class="value" id="exTopCat" style="font-size:1.1rem;">—</div></div>
+      </div>
+
+      <div class="card">
+        <div class="section-head">
+          <div class="section-title" style="margin-bottom:0;">All entries</div>
+          <button class="btn btn-primary btn-sm admin-only" id="addExpenseBtn">+ Add expense</button>
+        </div>
+        <table class="list-table">
+          <thead><tr><th>Date</th><th>Category</th><th>Note</th><th style="text-align:right;">Amount</th><th class="admin-only"></th></tr></thead>
+          <tbody id="expenseRows"><tr><td colspan="5" class="loading-row">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== NOTEBOOK ===== -->
+    <section class="view" id="view-notebook">
+      <div class="topbar">
+        <div>
+          <h1>Notebook &amp; tasks</h1>
+          <div class="desc">Quick notes and things to do.</div>
+        </div>
+        <button class="btn btn-primary btn-sm admin-only" id="addNoteBtn">+ New</button>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="all">All</button>
+        <button class="tab-btn" data-tab="task">Tasks</button>
+        <button class="tab-btn" data-tab="note">Notes</button>
+      </div>
+
+      <div class="note-grid" id="noteGrid"><div class="loading-row">Loading…</div></div>
+    </section>
+
+    <!-- ===== MEMBERS ===== -->
+    <section class="view" id="view-members">
+      <div class="topbar">
+        <div>
+          <h1>Members</h1>
+          <div class="desc">Family or team members, and what's been given to each.</div>
+        </div>
+        <button class="btn btn-primary btn-sm admin-only" id="addMemberBtn">+ Add member</button>
+      </div>
+
+      <div class="member-grid" id="memberGrid"><div class="loading-row">Loading…</div></div>
+    </section>
+
+    <!-- ===== MEMBER DETAIL (sub-view) ===== -->
+    <section class="view" id="view-member-detail">
+      <div class="topbar">
+        <div>
+          <button class="btn btn-ghost btn-sm" id="backToMembers">&#8592; Back to members</button>
+          <h1 style="margin-top:10px;" id="mdName">Member</h1>
+          <div class="desc" id="mdRelation">—</div>
+        </div>
+        <button class="btn btn-primary btn-sm admin-only" id="addTxnBtn">+ Log amount given</button>
+      </div>
+
+      <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="card stat-card"><div class="label">Total given (all time)</div><div class="value num" id="mdTotal">৳0</div></div>
+        <div class="card stat-card"><div class="label">This month</div><div class="value num" id="mdMonth">৳0</div></div>
+        <div class="card stat-card"><div class="label">Entries</div><div class="value num" id="mdCount">0</div></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">History</div>
+        <table class="list-table">
+          <thead><tr><th>Date</th><th>Note</th><th style="text-align:right;">Amount</th><th class="admin-only"></th></tr></thead>
+          <tbody id="txnRows"><tr><td colspan="4" class="loading-row">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== OFFICE MANAGEMENT ===== -->
+    <section class="view" id="view-office">
+      <div class="topbar">
+        <div>
+          <h1>Office management</h1>
+          <div class="desc">Income, expenses and balance for the office.</div>
+        </div>
+        <div class="month-picker">
+          <button id="ofPrev">&#8249;</button>
+          <span id="ofMonthLabel">—</span>
+          <button id="ofNext">&#8250;</button>
+        </div>
+      </div>
+
+      <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="card stat-card"><div class="label">Income</div><div class="value num" id="ofIncome">৳0</div></div>
+        <div class="card stat-card"><div class="label">Expense</div><div class="value num" id="ofExpense">৳0</div></div>
+        <div class="card stat-card" id="ofBalanceCard"><div class="label">Balance</div><div class="value num" id="ofBalance">৳0</div></div>
+      </div>
+
+      <div class="card">
+        <div class="section-head">
+          <div class="section-title" style="margin-bottom:0;">All entries</div>
+          <button class="btn btn-primary btn-sm admin-only" id="addOfficeBtn">+ Add entry</button>
+        </div>
+        <table class="list-table">
+          <thead><tr><th>Date</th><th>Type</th><th>Category</th><th>Note</th><th style="text-align:right;">Amount</th><th class="admin-only"></th></tr></thead>
+          <tbody id="officeRows"><tr><td colspan="6" class="loading-row">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<button class="fab admin-only" id="quickAddFab" title="Quick add">+</button>
+
+<!-- ===== MODALS ===== -->
+
+<div class="modal-backdrop" id="modalExpense">
+  <div class="modal">
+    <h3 id="expenseModalTitle">Add expense</h3>
+    <form id="expenseForm">
+      <input type="hidden" id="expId" />
+      <div class="form-row">
+        <div class="field"><label>Date</label><input type="date" id="expDate" required /></div>
+        <div class="field"><label>Amount (৳)</label><input type="number" id="expAmount" min="0" step="0.01" required /></div>
+      </div>
+      <div class="field">
+        <label>Category</label>
+        <div class="tag-select" id="expCategoryTags"></div>
+      </div>
+      <div class="field"><label>Note (optional)</label><textarea id="expNote" rows="2"></textarea></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close="modalExpense">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modalNote">
+  <div class="modal">
+    <h3 id="noteModalTitle">New note</h3>
+    <form id="noteForm">
+      <input type="hidden" id="noteId" />
+      <div class="field">
+        <label>Type</label>
+        <div class="tag-select">
+          <div class="tag-opt selected" data-type="note">Note</div>
+          <div class="tag-opt" data-type="task">Task</div>
+        </div>
+      </div>
+      <div class="field"><label>Title</label><input type="text" id="noteTitle" required /></div>
+      <div class="field"><label>Details (optional)</label><textarea id="noteBody" rows="3"></textarea></div>
+      <div class="field" id="noteDueWrap" style="display:none;"><label>Due date</label><input type="date" id="noteDue" /></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close="modalNote">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modalMember">
+  <div class="modal">
+    <h3>Add member</h3>
+    <form id="memberForm">
+      <div class="field"><label>Name</label><input type="text" id="memName" required /></div>
+      <div class="field"><label>Relation (optional)</label><input type="text" id="memRelation" placeholder="e.g. Son, Daughter, Staff" /></div>
+      <div class="field"><label>Phone (optional)</label><input type="text" id="memPhone" /></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close="modalMember">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modalTxn">
+  <div class="modal">
+    <h3>Log amount given</h3>
+    <form id="txnForm">
+      <div class="form-row">
+        <div class="field"><label>Date</label><input type="date" id="txnDate" required /></div>
+        <div class="field"><label>Amount (৳)</label><input type="number" id="txnAmount" min="0" step="0.01" required /></div>
+      </div>
+      <div class="field"><label>Note (optional)</label><textarea id="txnNote" rows="2"></textarea></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close="modalTxn">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modalOffice">
+  <div class="modal">
+    <h3>Add office entry</h3>
+    <form id="officeForm">
+      <div class="field">
+        <label>Type</label>
+        <div class="tag-select">
+          <div class="tag-opt" data-type="income">Income</div>
+          <div class="tag-opt selected" data-type="expense">Expense</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Date</label><input type="date" id="ofDate" required /></div>
+        <div class="field"><label>Amount (৳)</label><input type="number" id="ofAmount" min="0" step="0.01" required /></div>
+      </div>
+      <div class="field">
+        <label>Category</label>
+        <div class="tag-select" id="ofCategoryTags"></div>
+      </div>
+      <div class="field"><label>Note (optional)</label><textarea id="ofNote" rows="2"></textarea></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close="modalOffice">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modalBudget">
+  <div class="modal">
+    <h3>Monthly budgets</h3>
+    <form id="budgetForm">
+      <div class="field"><label>Personal expense limit (৳, 0 = no limit)</label><input type="number" id="budgetPersonal" min="0" step="0.01" /></div>
+      <div class="field"><label>Office expense limit (৳, 0 = no limit)</label><input type="number" id="budgetOffice" min="0" step="0.01" /></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close="modalBudget">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
